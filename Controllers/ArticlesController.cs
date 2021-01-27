@@ -33,58 +33,6 @@ namespace SalesDataAPI.Controllers
             _mapper = mapper;
         }
 
-        /// <summary>
-        ///  This Get method returns the number of sold article on a particular day {YY-MM-DD}
-        /// </summary>
-        /// <returns>Returns the number of sold articles</returns>
-        // GET api/articles/{date}
-        [HttpGet("{date:datetime?}")]
-        public ActionResult GetNumberOfSoldArticlePerDay(DateTime? date)
-        {
-            var numberOfSoldArticles = _repository.GetNumberOfSoldArticlePerDay(date);
-
-            if (numberOfSoldArticles != null)
-            {
-                return Content(numberOfSoldArticles, "application/json");
-            }
-            return NotFound();
-        }
-
-        /// <summary>
-        ///  This GET method returns the total revenue generated on a particular day {YY-MM-DD}
-        /// </summary>   
-        /// <returns>Returns the total revenue of sold articles</returns>
-        // GET api/articles/revenue/{data}
-        [HttpGet("revenue/{date:datetime?}")]
-        public ActionResult GetTotalRevenuePerDay(DateTime? date)
-        {
-            var totalRevenuePerDay = _repository.GetTotalRevenuePerDay(date);
-
-            if (totalRevenuePerDay != null)
-            {
-                return Content(totalRevenuePerDay, "appliction/json");
-            }
-            return NotFound();
-        }
-
-        /// <summary>
-        ///  This GET method returns the statistics of articles sold between two dates
-        /// </summary>   
-        /// <returns>Returns the statistics of articles sold</returns>
-        // GET api/articles/statistics/{startdata}/{enddate}
-        [HttpGet("statistics/{start:datetime}/{end:datetime}")]
-        public ActionResult<IEnumerable<ArticleStatsDto>> GetArticleStatistics(DateTime? start, DateTime? end)
-        {
-            var articlesStatistics = _repository.GetArticlesStatistics(start, end);
-
-            if (articlesStatistics != null)
-            {
-                return Ok(_mapper.Map<IEnumerable<ArticleStatsDto>>(articlesStatistics));
-            }
-
-            return NoContent();
-        }
-
 
         /// <summary>
         ///  This POST method creates a new Article 
@@ -105,32 +53,120 @@ namespace SalesDataAPI.Controllers
         /// <response code="400">If the article is null</response> 
         // POST api/articles/
         [HttpPost]
-        public ActionResult<ArticleReadDto> CreateArticle(ArticleCreateDto articleCreateDto)
+        public ActionResult<ArticleReadDto> CreateArticle([FromBody]ArticleCreateDto articleCreateDto)
         {
-            var articleModel = _mapper.Map<Article>(articleCreateDto);
+            try 
+            {
+                if (articleCreateDto == null)
+                {
+                    return BadRequest("Article is null");
+                }
 
-            _repository.CreateArticle(articleModel);
-            _repository.SaveChanges();
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid model object");
+                }
 
-            var articleReadDto = _mapper.Map<ArticleReadDto>(articleModel);
+                var articleModel = _mapper.Map<Article>(articleCreateDto);
 
-            return CreatedAtRoute(nameof(GetArticleById), new { Id = articleReadDto.Id }, articleReadDto);
-        }
+                _repository.CreateArticle(articleModel);
+                _repository.SaveChanges();
+
+                var articleReadDto = _mapper.Map<ArticleReadDto>(articleModel);
+
+                return CreatedAtRoute(nameof(GetArticleById), new { Id = articleReadDto.Id }, articleReadDto);
+    
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Logging {ex}");
+                return StatusCode(500, "Internal server error");
+            }
+       }
 
 
 
         /// <summary>
-        /// This GET method returns all the sold articles
-        /// </summary>   
-        /// <returns>A List containing all sold articles</returns>
-        // GET api/articles/
-        [HttpGet]
-        public ActionResult<IEnumerable<ArticleReadDto>> GetAllArticlesSold()
+        ///  This Get method returns the number of sold article on a particular day {YY-MM-DD}
+        /// </summary>
+        /// <returns>Returns the number of sold articles</returns>
+        // GET api/articles/{date}
+        [HttpGet("{date:datetime?}")]
+        public ActionResult GetNumberOfSoldArticlePerDay(DateTime? date)
         {
-            var articleItems = _repository.GetAllArticles();
+            try
+            {
+                var numberOfSoldArticles = _repository.GetNumberOfSoldArticlePerDay(date);
 
-            return Ok(_mapper.Map<IEnumerable<ArticleReadDto>>(articleItems));
+                if (numberOfSoldArticles != null)
+                {
+                    return Content(numberOfSoldArticles, "application/json");
+                }
+                return NotFound();     
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Logging {ex}");
+                return StatusCode(500, "Internal Server Error");
+            }
+          
         }
+
+        /// <summary>
+        ///  This GET method returns the total revenue generated on a particular day {YY-MM-DD}
+        /// </summary>   
+        /// <returns>Returns the total revenue of sold articles</returns>
+        // GET api/articles/revenue/{data}
+        [HttpGet("revenue/{date:datetime?}")]
+        public ActionResult GetTotalRevenuePerDay(DateTime? date)
+        {
+            try
+            {
+                var totalRevenuePerDay = _repository.GetTotalRevenuePerDay(date);
+
+                if (totalRevenuePerDay != null)
+                {
+                    return Content(totalRevenuePerDay, "appliction/json");
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Logging {ex}");
+                return StatusCode(500, "Internal Server Error") ;
+            }
+        }
+
+        /// <summary>
+        ///  This GET method returns the statistics of articles sold between two dates
+        /// </summary>   
+        /// <returns>Returns the statistics of articles sold</returns>
+        // GET api/articles/statistics/{startdata}/{enddate}
+        [HttpGet("statistics/{start:datetime}/{end:datetime}")]
+        public ActionResult<IEnumerable<ArticleStatsDto>> GetArticleStatistics(DateTime? start, DateTime? end)
+        {
+            try
+            {
+                var articlesStatistics = _repository.GetArticlesStatistics(start, end);
+
+                if (articlesStatistics != null)
+                {
+                    return Ok(_mapper.Map<IEnumerable<ArticleStatsDto>>(articlesStatistics));
+                }
+
+                return NoContent();               
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Logging {ex}");
+                return StatusCode(500, "Internal Server Error") ;
+            }
+
+        }
+
+
 
         /// <summary>
         ///  This GET method returns the article with the specified id 
@@ -148,6 +184,20 @@ namespace SalesDataAPI.Controllers
                 return Ok(_mapper.Map<ArticleReadDto>(articleItem));
             }
             return NotFound();
+        }
+
+
+        /// <summary>
+        /// This GET method returns all the sold articles
+        /// </summary>   
+        /// <returns>A List containing all sold articles</returns>
+        // GET api/articles/
+        [HttpGet]
+        public ActionResult<IEnumerable<ArticleReadDto>> GetAllArticlesSold()
+        {
+            var articleItems = _repository.GetAllArticles();
+
+            return Ok(_mapper.Map<IEnumerable<ArticleReadDto>>(articleItems));
         }
 
 
