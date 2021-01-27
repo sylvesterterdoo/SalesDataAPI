@@ -26,10 +26,10 @@ namespace SalesDataAPI.Models
             System.Console.WriteLine("Applying Migrations...");
             context.Database.Migrate();
 
-            if (!context.ArticlesItems.Any()) 
+            if (!context.Articles.Any()) 
             {
                 System.Console.WriteLine("Adding data - seeding");
-                context.ArticlesItems.AddRange(
+                context.Articles.AddRange(
                     new Article() { ArticleNumber = "articleNumber1", SalesPrice = 20.5, DateOfSale = new DateTime(2021, 1, 1) },
                     new Article() { ArticleNumber = "articleNumber2", SalesPrice = 30.5, DateOfSale = new DateTime(2020, 1, 10) },
                     new Article() { ArticleNumber = "articleNumber3", SalesPrice = 10.5, DateOfSale = new DateTime(2021, 1, 1) },
