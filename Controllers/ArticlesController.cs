@@ -15,14 +15,17 @@ namespace SalesDataAPI.Controllers
 {
 
     // api/articles
+    /// <summary>
+    ///  Article Controller responsible for managing articles
+    /// </summary>
     [Route("api/articles")]
     [ApiController]
+    [Produces("application/json")]
     public class ArticlesController : ControllerBase
     {
         private readonly ISalesDataRepository _repository;
         private readonly IMapper _mapper;
 
-        //private readonly MockSalesDataRepository _repository = new MockSalesDataRepository();
 
         public ArticlesController(ISalesDataRepository repository, IMapper mapper)
         {
@@ -30,6 +33,10 @@ namespace SalesDataAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        ///  This Get method returns the number of sold article on a particular day {YY-MM-DD}
+        /// </summary>
+        /// <returns>Returns the number of sold articles</returns>
         // GET api/articles/{date}
         [HttpGet("{date:datetime?}")]
         public ActionResult GetNumberOfSoldArticlePerDay(DateTime? date)
@@ -43,9 +50,13 @@ namespace SalesDataAPI.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        ///  This GET method returns the total revenue generated on a particular day {YY-MM-DD}
+        /// </summary>   
+        /// <returns>Returns the total revenue of sold articles</returns>
         // GET api/articles/revenue/{data}
         [HttpGet("revenue/{date:datetime?}")]
-        public ActionResult<Article> GetTotalRevenuePerDay(DateTime? date)
+        public ActionResult GetTotalRevenuePerDay(DateTime? date)
         {
             var totalRevenuePerDay = _repository.GetTotalRevenuePerDay(date);
 
@@ -56,6 +67,10 @@ namespace SalesDataAPI.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        ///  This GET method returns the statistics of articles sold between two dates
+        /// </summary>   
+        /// <returns>Returns the statistics of articles sold</returns>
         // GET api/articles/statistics/{startdata}/{enddate}
         [HttpGet("statistics/{start:datetime}/{end:datetime}")]
         public ActionResult<IEnumerable<ArticleStatsDto>> GetArticleStatistics(DateTime? start, DateTime? end)
@@ -70,6 +85,24 @@ namespace SalesDataAPI.Controllers
             return NoContent();
         }
 
+
+        /// <summary>
+        ///  This POST method creates a new Article 
+        /// </summary>   
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /api/articles/
+        ///     {
+        ///        "ArticleNumber": "articleNumber1",
+        ///        "SalesPrice": 25.5
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="article"></param>
+        /// <returns>A newly created article</returns>
+        /// <response code="201">Returns the newly created article</response>
+        /// <response code="400">If the article is null</response> 
         // POST api/articles/
         [HttpPost]
         public ActionResult<ArticleReadDto> CreateArticle(ArticleCreateDto articleCreateDto)
@@ -86,6 +119,10 @@ namespace SalesDataAPI.Controllers
 
 
 
+        /// <summary>
+        /// This GET method returns all the sold articles
+        /// </summary>   
+        /// <returns>A List containing all sold articles</returns>
         // GET api/articles/
         [HttpGet]
         public ActionResult<IEnumerable<ArticleReadDto>> GetAllArticlesSold()
@@ -95,6 +132,10 @@ namespace SalesDataAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<ArticleReadDto>>(articleItems));
         }
 
+        /// <summary>
+        ///  This GET method returns the article with the specified id 
+        /// </summary>   
+        /// <returns>A json containing the article with the specified id</returns>
         // GET api/articles/{id} 
         [HttpGet("{id}", Name = "GetArticleById")]
         public ActionResult<ArticleReadDto> GetArticleById(int id)
