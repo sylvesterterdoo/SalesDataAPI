@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using SalesDataAPI.Data;
+using System.Linq;
 
 namespace SalesDataAPI.Models
 {
@@ -25,16 +26,24 @@ namespace SalesDataAPI.Models
             System.Console.WriteLine("Applying Migrations...");
             context.Database.Migrate();
 
-            System.Console.WriteLine("Adding data - seeding");
-            context.Articles.AddRange(
-            new Article() { ArticleNumber = "articleNumber1", SalesPrice = 20.5, DateOfSale = new DateTime(2021, 1, 1) },
-            new Article() { ArticleNumber = "articleNumber2", SalesPrice = 30.5, DateOfSale = new DateTime(2020, 1, 10) },
-            new Article() { ArticleNumber = "articleNumber3", SalesPrice = 10.5, DateOfSale = new DateTime(2021, 1, 1) },
-            new Article() { ArticleNumber = "articleNumber4", SalesPrice = 50.5, DateOfSale = new DateTime(2020, 12, 25) },
-            new Article() { ArticleNumber = "articleNumber5", SalesPrice = 15.5, DateOfSale = new DateTime(2021, 1, 1) }
-            );
+            if (!context.ArticlesItems.Any()) 
+            {
+                System.Console.WriteLine("Adding data - seeding");
+                context.ArticlesItems.AddRange(
+                    new Article() { ArticleNumber = "articleNumber1", SalesPrice = 20.5, DateOfSale = new DateTime(2021, 1, 1) },
+                    new Article() { ArticleNumber = "articleNumber2", SalesPrice = 30.5, DateOfSale = new DateTime(2020, 1, 10) },
+                    new Article() { ArticleNumber = "articleNumber3", SalesPrice = 10.5, DateOfSale = new DateTime(2021, 1, 1) },
+                    new Article() { ArticleNumber = "articleNumber4", SalesPrice = 50.5, DateOfSale = new DateTime(2020, 12, 25) },
+                    new Article() { ArticleNumber = "articleNumber5", SalesPrice = 15.5, DateOfSale = new DateTime(2021, 1, 1) }
+                    );
             context.SaveChanges();
         
+            }
+            else
+            {
+                System.Console.WriteLine("Already have data - not seeding");
+            }
+       
 
         }
     }
