@@ -9,7 +9,7 @@ docker-compose run
 # API Documentation
 Where the field {YY-MM-DD} represent a date like 2018-12-25
 
-- Post sales data : POST /api/article/{YY-MM-DD}
+- Post sales data : POST /api/article/
 ```json
 http code 201
 {
