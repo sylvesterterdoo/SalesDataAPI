@@ -25,7 +25,7 @@ namespace SalesDataAPI.Data
 
             var entries = articlesStats.Select(d =>
                 string.Format("\"{0}\": {1}", d.Key, string.Join(",", d.Value)));
-            return entries;
+            return null;
         }
 
         public string GetNumberOfSoldArticlePerDay(DateTime? date)
