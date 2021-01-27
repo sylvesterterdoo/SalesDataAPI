@@ -44,7 +44,7 @@ http code 200
 
 - Statistics : Revenue grouped by articles : GET /api/articles/revenues/{YY-MM-DD}/{YY-MM-DD}
 
-Returns an aggregate count and total of articles sold from {firstDate } / {secondDate}
+Returns an aggregate count and total of articles sold between {firstDate } / {secondDate}
 
 Assuming : multiple sold item can have the same article number.
 ```json
